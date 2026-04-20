@@ -77,8 +77,3 @@ class ExamSubmission(models.Model):
 
     class Meta:
         db_table = "exam_submissions"
-
-        # git 브렌치 분기 해야하는지
-        # 모델 참조 경로
-        # TimeStampModel 누가 만드는지 / created_at 직접해야하는지 user에서 만들어주면 참조
-        # poetry 문제있습니다.
