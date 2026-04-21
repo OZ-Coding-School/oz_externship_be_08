@@ -26,8 +26,8 @@ class CustomUserManager(BaseUserManager["User"]):
 
 class User(AbstractBaseUser, TimeStampModel):
     class Gender(models.TextChoices):
-        MALE = "male", "남성"
-        FEMALE = "female", "여성"
+        MALE = "M", "남성"
+        FEMALE = "F", "여성"
 
     class Role(models.TextChoices):
         USER = "USER", "일반유저"
@@ -39,7 +39,7 @@ class User(AbstractBaseUser, TimeStampModel):
     name = models.CharField(max_length=30, null=False)
     nickname = models.CharField(max_length=10, null=False, unique=True)
     phone_number = models.CharField(max_length=20, null=False, unique=True)
-    gender = models.CharField(max_length=6, null=True)
+    gender = models.CharField(max_length=6, null=True, choices=Gender.choices)
     birthday = models.DateField(null=True)
     profile_img_url = models.CharField(max_length=255, null=True, blank=True)
     is_active = models.BooleanField(default=False)
