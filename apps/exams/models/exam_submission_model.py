@@ -1,7 +1,10 @@
-from django.db import models
-from apps.core.models import TimeStampModel
 from django.conf import settings
+from django.db import models
+
+from apps.core.models import TimeStampModel
+
 from .exam_deployment_model import ExamDeployment
+
 
 class ExamSubmission(TimeStampModel):
     submitter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

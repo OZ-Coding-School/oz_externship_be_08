@@ -1,6 +1,9 @@
 from django.db import models
+
 from apps.core.models import TimeStampModel
+
 from .exam_model import Exam
+
 
 class ExamQuestion(TimeStampModel):
 
