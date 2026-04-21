@@ -20,7 +20,7 @@ class ExamQuestion(TimeStampModel):
     prompt = models.TextField(null=True, blank=True)
     blank_count = models.SmallIntegerField(max_length=1, null=True, blank=True)
     optional_json = models.TextField(null=True, blank=True)
-    type = models.CharField(choices=QuestionType.choices)
+    type = models.CharField(choices=QuestionType.choices,max_length=10)
     answer = models.JSONField(
         default=dict,
     )
