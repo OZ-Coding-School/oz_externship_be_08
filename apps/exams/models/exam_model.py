@@ -1,4 +1,5 @@
-from apps.core.models import TimeStampModle
+from apps.core.models import TimeStampModel
+from django.db import models
 
 class Exam(TimeStampModel):
     # subject = models.ForeignKey(Subject,on_delete=models.CASCADE)
