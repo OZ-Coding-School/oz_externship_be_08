@@ -7,13 +7,13 @@ from apps.qna.models.answer_models import AnswerImages, Answers
 
 class AnswerRequestSerializer(serializers.Serializer[Answers]):
     content = serializers.CharField(required=True)
-    image_url = serializers.ListField(
+    img_url = serializers.ListField(
         child=serializers.CharField(),
         required=True,
     )
 
-    def create(self, validated_data:dict[str,Any])->Answers:
-        image_data = validated_data.pop("image_url")
+    def create(self, validated_data: dict[str, Any]) -> Answers:
+        image_data = validated_data.pop("img_url")
         answer = Answers.objects.create(**validated_data)
         for img in image_data:
             AnswerImages.objects.create(img_url=img, answer=answer)

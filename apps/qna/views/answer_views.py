@@ -17,7 +17,7 @@ from apps.qna.serializers.answer_serializers import (
 class AnswerView(APIView):
     # permission_classes = [IsAuthenticated]
 
-    def post(self, request: Request, question_id:int)->Response:
+    def post(self, request: Request, question_id: int) -> Response:
         question = get_object_or_404(Questions, pk=question_id)
         serializer = AnswerRequestSerializer(
             data=request.data,
