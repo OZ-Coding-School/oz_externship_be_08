@@ -23,8 +23,7 @@ class AnswerView(APIView):
             data=request.data,
         )
         if not serializer.is_valid():
-            return Response({"error_detail": "유효하지 않은 답변 등록 요청입니다."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error_detail": "유효하지 않은 답변 등록 요청입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
         author_id = request.user.id
         assert author_id is not None
