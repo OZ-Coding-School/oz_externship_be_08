@@ -3,7 +3,7 @@ from .course import Course
 
 class Subject(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='subjects')
-    title = models.CharField(max_length=30, unique=True)
+    title = models.CharField(max_length=30)
     number_of_days = models.PositiveSmallIntegerField()
     number_of_hours = models.PositiveSmallIntegerField()
     thumbnail_img_url = models.CharField(max_length=255, null=True, blank=True)
