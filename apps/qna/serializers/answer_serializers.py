@@ -1,23 +1,14 @@
-from typing import Any
-
 from rest_framework import serializers
 
-from apps.qna.models.answer_models import AnswerImages, Answers
+from apps.qna.models.answer_models import Answers
 
 
 class AnswerRequestSerializer(serializers.Serializer[Answers]):
     content = serializers.CharField(required=True)
-    img_url = serializers.ListField(
+    img_urls = serializers.ListField(
         child=serializers.CharField(),
         required=True,
     )
-
-    def create(self, validated_data: dict[str, Any]) -> Answers:
-        image_data = validated_data.pop("img_url")
-        answer = Answers.objects.create(**validated_data)
-        for img in image_data:
-            AnswerImages.objects.create(img_url=img, answer=answer)
-        return answer
 
 
 class AnswerResponseSerializer(serializers.ModelSerializer[Answers]):

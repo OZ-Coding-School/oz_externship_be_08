@@ -1,8 +1,9 @@
-from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
-from apps.users.models import User
-from apps.qna.models.question_models import Questions,QuestionCategories
 from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APIClient, APITestCase
+
+from apps.qna.models.question_models import QuestionCategories, Questions
+from apps.users.models import User
 
 
 class BaseTestCase(APITestCase):
@@ -30,38 +31,39 @@ class BaseTestCase(APITestCase):
             view_count=0,
         )
 
+
 class AnswersViewTestCase(BaseTestCase):
     """
     답변 등록 API
     /api/v1/qna/questions/{question_id}/answers
     post 테스트
     """
-    def setUp(self)-> None:
+
+    def setUp(self) -> None:
         self.client = APIClient()
         super().setUp()
 
-    def test_answer_create(self)->None:
+    def test_answer_create(self) -> None:
         self.answer = {
-            "content":"testcontent",
-            "img_url": ["testimageurl"],
-
+            "content": "testcontent",
+            "img_urls": ["testimageurl"],
         }
         self.client.force_authenticate(user=self.user)
-        url = reverse("question_answers",kwargs = {"question_id":self.question.id})
-        response = self.client.post(url,self.answer,format="json")
+        url = reverse("question_answers", kwargs={"question_id": self.question.id})
+        response = self.client.post(url, self.answer, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["question_id"],self.question.id)
-        self.assertEqual(response.data["author_id"],self.user.id)
+        self.assertEqual(response.data["question_id"], self.question.id)
+        self.assertEqual(response.data["author_id"], self.user.id)
         self.assertIn("created_at", response.data)
         self.assertIn("answer_id", response.data)
 
-    def test_answer_create_invalid(self)->None:
+    def test_answer_create_invalid(self) -> None:
         self.answer = {
             "content": "testcontent",
         }
         self.client.force_authenticate(user=self.user)
-        url = reverse("question_answers",kwargs = {"question_id":self.question.id})
-        response = self.client.post(url,self.answer,format="json")
+        url = reverse("question_answers", kwargs={"question_id": self.question.id})
+        response = self.client.post(url, self.answer, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
