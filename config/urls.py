@@ -7,9 +7,7 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
-urlpatterns: list[URLPattern | URLResolver] = [
-    path('api/v1/accounts/', include('apps.users.urls.user'))
-]
+urlpatterns: list[URLPattern | URLResolver] = [path("api/v1/accounts/", include("apps.users.urls.user"))]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
