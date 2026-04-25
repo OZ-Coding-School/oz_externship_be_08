@@ -7,9 +7,9 @@ from apps.core.utils.permissions import IsRoleAdminUser
 from apps.core.utils.s3_urls import s3
 
 
+# TODO: 권한 에러메시지 detail에서 error_detail로 수정하는 믹스인 추가
 class PresignedUrlView(APIView):
     permission_classes = [IsRoleAdminUser]
-
     PATH = "uploads/exams/thumbnails"
 
     def put(self, request: Request) -> Response:

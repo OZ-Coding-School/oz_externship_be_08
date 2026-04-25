@@ -1,9 +1,11 @@
 import re
-
-from rest_framework.test import APITestCase
-from apps.users.models import User
-from django.urls import reverse
 from unittest.mock import patch
+
+from django.urls import reverse
+from rest_framework.test import APITestCase
+
+from apps.users.models import User
+
 
 class PresignedUrlBaseTestCase(APITestCase):
     user: User
@@ -29,7 +31,7 @@ class PresignedUrlBaseTestCase(APITestCase):
             is_active=True,
             role="ADMIN",
         )
-        cls.no_name = '.jpg'
+        cls.no_name = ".jpg"
         cls.no_subfix = "test_file"
         cls.file_name = "test_file.jpg"
 
@@ -59,7 +61,7 @@ class TestPresignedUrl(PresignedUrlBaseTestCase):
 
         # uuid 값
         uuid_part = key.removeprefix("uploads/exams/thumbnails/").removesuffix(".jpg")
-        uuid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+        uuid_pattern = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
         self.assertRegex(uuid_part, uuid_pattern)
 
     def test_presigned_url_as_user(self) -> None:
@@ -97,4 +99,3 @@ class TestPresignedUrl(PresignedUrlBaseTestCase):
         response = self.client.put(reverse("presigned-url"))
 
         self.assertEqual(response.status_code, 400)
-
