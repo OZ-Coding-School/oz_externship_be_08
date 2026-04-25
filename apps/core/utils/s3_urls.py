@@ -3,8 +3,11 @@
 
 from apps.core.utils.s3_urls import s3
 위에서처럼 임포트해서 쓰세요
-s3.create_upload_urls()을 사용해서 presigned_url과 img_url을 생성하세요
-파라미터에 대한 설명은 create_upload_urls() 내부에 있습니다
+
+presigned_url 생성: s3.create_presigned_url()
+img_url 생성: s3.create_img_url()
+
+파라미터에 대한 설명은 create_presigned_url() 내부에 있습니다
 """
 
 import uuid
@@ -33,10 +36,8 @@ class S3Handler:
         self.bucket = settings.AWS_S3_BUCKET_NAME
         self.region = settings.AWS_S3_REGION
 
-    # presigned url과 img_url 2개를 반환하는 함수
-    def create_upload_urls(
-        self, file_name: str, path: str, expire: int = 600, *, add_name: str | None = None
-    ) -> tuple[str, str]:
+    # presigned url을 반환하는 함수
+    def create_presigned_url(self, file_name: str, path: str, expire: int = 600, *, add_name: str | None = None) -> str:
         """
         file_name: 확장자를 포함한 파일명을 그대로 넣어주세요
         path: 저장경로에서 파일명을 뺀 값. 저장경로가 uploads/images/questions/uuid.png라면
@@ -45,43 +46,49 @@ class S3Handler:
         add_name: 파일명을 uuid_cat.png처럼 만들고 싶다면, add_name에 cat을 넣어주면 됩니다
         """
 
-        suffix, content_type = self._suffix(file_name)
+        key, content_type = self._key_and_type(path, file_name, add_name)
+        presigned_url = self._presigned_url_for_upload(key, content_type, expire)
 
-        key = self._key(path, suffix, add_name)
+        return presigned_url
 
-        presigned_url = self._upload_presigned_url(key, content_type, expire)
+    # img_url을 반환하는 함수
+    def create_img_url(self, file_name: str, path: str, *, add_name: str | None = None) -> str:
+        """
+        파라미터에 대한 설명은 create_presigned_url() 참고
+        """
 
+        key, _ = self._key_and_type(path, file_name, add_name)
         img_url = self._img_url(key)
 
-        return presigned_url, img_url
+        return img_url
 
-    # 확장자 분리, 확장자 화이트 리스트
+    # key: 파일명을 포함한 저장경로. ex) uploads/images/questions/uuid.png
+    def _key_and_type(self, path: str, file_name: str, add_name: str | None = None) -> tuple[str, str]:
+        suffix = self._suffix(file_name)
+        key = path.rstrip("/") + "/" + self._image_uuid(add_name) + suffix
+        content_type = self.ALLOWED_SUFFIX[suffix]
+
+        return key, content_type
+
+    # 파일명에서 확장자 분리, 확장자 화이트 리스트
     @classmethod
-    def _suffix(cls, file_name: str) -> tuple[str, str]:
+    def _suffix(cls, file_name: str) -> str:
         suffix = Path(file_name).suffix.lower()
 
         if suffix not in cls.ALLOWED_SUFFIX:
             raise ValueError("지원하지 않는 파일 형식입니다.")
 
-        content_type = cls.ALLOWED_SUFFIX[suffix]
+        return suffix
 
-        return suffix, content_type
-
-    # 키: 파일명을 포함한 저장경로. ex) uploads/images/questions/uuid.png
-    def _key(self, path: str, suffix: str, add_name: str | None = None) -> str:
-        key = path.rstrip("/") + "/" + self._image_uuid(add_name) + suffix
-
-        return key
-
-    # 파일명 생성 함수
+    # uuid 파일명 생성 함수
     @staticmethod
-    def _image_uuid(add_name: str | None) -> str:
+    def _image_uuid(add_name: str | None = None) -> str:
         add = f"_{add_name}" if add_name else ""
 
         return str(uuid.uuid4()) + add
 
     # 업로드용 presigned url 생성 함수
-    def _upload_presigned_url(self, key: str, content_type: str, expire: int = 600) -> str:
+    def _presigned_url_for_upload(self, key: str, content_type: str, expire: int = 600) -> str:
         presigned_url = self.s3.generate_presigned_url(
             ClientMethod="put_object",
             Params={
