@@ -36,7 +36,7 @@ class S3Handler:
     # presigned url과 img_url 2개를 반환하는 함수
     def create_upload_urls(
         self, file_name: str, path: str, expire: int = 600, *, add_name: str | None = None
-    ) -> tuple[str, str]:
+    ) -> tuple[str, str, str]:
         """
         file_name: 확장자를 포함한 파일명을 그대로 넣어주세요
         path: 저장경로에서 파일명을 뺀 값. 저장경로가 uploads/images/questions/uuid.png라면
@@ -44,6 +44,8 @@ class S3Handler:
         expire: 넣거나 말거나
         add_name: 파일명을 uuid_cat.png처럼 만들고 싶다면, add_name에 cat을 넣어주면 됩니다
         """
+        if not file_name:
+            raise ValueError("파일을 첨부해주세요.")
 
         suffix, content_type = self._suffix(file_name)
 
@@ -53,7 +55,7 @@ class S3Handler:
 
         img_url = self._img_url(key)
 
-        return presigned_url, img_url
+        return presigned_url, img_url, key
 
     # 확장자 분리, 확장자 화이트 리스트
     @classmethod
