@@ -46,7 +46,7 @@ class S3Handler:
         add_name: 파일명을 uuid_cat.png처럼 만들고 싶다면, add_name에 cat을 넣어주면 됩니다
         """
 
-        key, content_type = self._key_and_type(path, file_name, add_name)
+        key, content_type = self._key_and_type(file_name, path, add_name)
         presigned_url = self._presigned_url_for_upload(key, content_type, expire)
 
         return presigned_url
@@ -57,13 +57,13 @@ class S3Handler:
         파라미터에 대한 설명은 create_presigned_url() 참고
         """
 
-        key, _ = self._key_and_type(path, file_name, add_name)
+        key, _ = self._key_and_type(file_name, path, add_name)
         img_url = self._img_url(key)
 
         return img_url
 
     # key: 파일명을 포함한 저장경로. ex) uploads/images/questions/uuid.png
-    def _key_and_type(self, path: str, file_name: str, add_name: str | None = None) -> tuple[str, str]:
+    def _key_and_type(self, file_name: str, path: str, add_name: str | None = None) -> tuple[str, str]:
         suffix = self._suffix(file_name)
         key = path.rstrip("/") + "/" + self._image_uuid(add_name) + suffix
         content_type = self.ALLOWED_SUFFIX[suffix]
