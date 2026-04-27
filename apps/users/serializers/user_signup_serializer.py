@@ -3,7 +3,7 @@ import re
 from rest_framework import serializers
 
 from apps.users.models import User
-from apps.users.services.user import create_user
+from apps.users.services.user_signup_service import create_user
 
 
 class SignupSerializer(serializers.ModelSerializer["User"]):
@@ -46,11 +46,6 @@ class SignupSerializer(serializers.ModelSerializer["User"]):
     def validate(self, data: dict[str, str]) -> dict[str, str]:
         if data["password"] != data["password_confirm"]:
             raise serializers.ValidationError({"password": "비밀번호가 일치하지 않습니다."})
-        # TODO : 토큰 구현 완료되면 email, phone_number 꺼내서 중복검사 추가해주세요
-        # if User.objects.filter(email=email).exists():
-        #     raise serializers.ValidationError('이미 가입된 이메일입니다.')
-        # if User.objects.filter(phone_number=phone_number).exists():
-        #     raise serializers.ValidationError('이미 가입에 사용된 휴대전화 번호입니다.')
         return data
 
     def create(self, validated_data: dict[str, str]) -> User:
