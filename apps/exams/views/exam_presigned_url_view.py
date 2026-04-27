@@ -5,12 +5,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.core.utils.permissions import IsRoleAdminUser
-from apps.exams.serializers.presigned_url_serializer import (
+from apps.exams.serializers.exam_presigned_url_serializer import (
     ExamErrorResponseSerializer,
     ExamPresignedUrlRequestSerializer,
     ExamPresignedUrlResponseSerializer,
 )
-from apps.exams.services.presigned_url_service import presigned_url_generation
+from apps.exams.services.exam_presigned_url_service import presigned_url_generation
 
 
 # TODO: 권한 에러메시지 detail에서 error_detail로 수정하는 믹스인 추가
