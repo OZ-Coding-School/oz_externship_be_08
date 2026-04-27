@@ -84,4 +84,4 @@ class TestS3Urls(TestCase):
         presigned_url, img_url, key = s3.create_upload_urls(self.file_name, self.path)
         self.assertTrue(presigned_url.startswith("https://"))
         self.assertTrue(img_url.startswith("https://"))
-        self.assertNotEqual(presigned_url, img_url, key)
+        self.assertNotEqual(presigned_url, img_url)
