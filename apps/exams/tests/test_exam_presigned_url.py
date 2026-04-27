@@ -10,6 +10,10 @@ from apps.users.models import User
 class PresignedUrlBaseTestCase(APITestCase):
     user: User
     admin: User
+    no_name: str
+    no_subfix: str
+    file_name: str
+
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -37,11 +41,11 @@ class PresignedUrlBaseTestCase(APITestCase):
 
 
 class TestPresignedUrl(PresignedUrlBaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.mock_s3 = patch("apps.core.utils.s3_urls.s3.s3").start()
         self.mock_s3.generate_presigned_url.return_value = "https://test-presigned-url.com"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         patch.stopall()
 
     # 권한

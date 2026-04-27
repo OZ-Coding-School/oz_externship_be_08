@@ -81,7 +81,7 @@ class TestS3Urls(TestCase):
     # s3.create_upload_urls()가 잘 나오는지
     @mock_aws
     def test_create_upload_urls(self) -> None:
-        presigned_url, img_url, key = s3.create_upload_urls(self.file_name, self.path)
+        presigned_url, img_url = s3.create_upload_urls(self.file_name, self.path)
         self.assertTrue(presigned_url.startswith("https://"))
         self.assertTrue(img_url.startswith("https://"))
         self.assertNotEqual(presigned_url, img_url)
