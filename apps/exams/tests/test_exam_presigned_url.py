@@ -14,7 +14,6 @@ class PresignedUrlBaseTestCase(APITestCase):
     no_subfix: str
     file_name: str
 
-
     @classmethod
     def setUpTestData(cls) -> None:
         cls.user = User.objects.create_user(
