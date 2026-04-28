@@ -8,3 +8,15 @@ class PostPermissionDeniedError(Exception):
 
 class CommentNotFoundError(Exception):
     pass
+
+
+class PostLikePostNotFoundError(Exception):
+    pass
+
+
+class PostAlreadyLikedError(Exception):
+    pass
+
+
+class PostLikeNotRegisteredError(Exception):
+    pass
