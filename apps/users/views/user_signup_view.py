@@ -23,4 +23,3 @@ class SignupView(APIView):
             return Response({"detail": "회원가입이 완료되었습니다."}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({"error_detail": e.detail}, status=status.HTTP_409_CONFLICT)
-
