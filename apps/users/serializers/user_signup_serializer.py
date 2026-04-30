@@ -1,4 +1,5 @@
 import re
+from typing import Any
 
 from rest_framework import serializers
 
@@ -10,26 +11,25 @@ class SignupSerializer(serializers.ModelSerializer["User"]):
     email_token = serializers.CharField(write_only=True)
     sms_token = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
-    password_confirm = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
         fields = [
-            "name",
+            "password",
             "nickname",
+            "name",
             "birthday",
             "gender",
             "email_token",
             "sms_token",
-            "password",
-            "password_confirm",
         ]
+        extra_kwargs: dict[str, dict[str, Any]] = {
+            "nickname": {"validators": []},
+        }
 
     def validate_nickname(self, value: str) -> str:
         if not re.match(r"^[가-힣a-zA-Z0-9]{2,10}$", value):
             raise serializers.ValidationError("닉네임은 2~10자 이내, 특수문자 제외, 한글/영문/숫자만 허용됩니다.")
-        if User.objects.filter(nickname=value).exists():
-            raise serializers.ValidationError("이미 사용 중인 닉네임입니다.")
         return value
 
     def validate_password(self, value: str) -> str:
@@ -43,11 +43,5 @@ class SignupSerializer(serializers.ModelSerializer["User"]):
             raise serializers.ValidationError("비밀번호는 특수문자를 포함해야 합니다.")
         return value
 
-    def validate(self, data: dict[str, str]) -> dict[str, str]:
-        if data["password"] != data["password_confirm"]:
-            raise serializers.ValidationError({"password": "비밀번호가 일치하지 않습니다."})
-        return data
-
     def create(self, validated_data: dict[str, str]) -> User:
-        validated_data.pop("password_confirm")
         return create_user(validated_data)
