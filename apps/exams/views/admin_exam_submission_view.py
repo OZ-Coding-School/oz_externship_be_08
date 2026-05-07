@@ -1,6 +1,9 @@
+from typing import Never
+
 from rest_framework import status
 from rest_framework.exceptions import NotAuthenticated, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -15,12 +18,12 @@ from apps.exams.services.admin_exam_submission_service import get_submission_lis
 class AdminExamSubmissionView(APIView):
     permission_classes = [IsRoleAdminUser]
 
-    def permission_denied(self, request, message=None, code=None):
+    def permission_denied(self, request: Request, message: str | None = None, code: str | None = None) -> Never:
         if request.authenticators and not request.successful_authenticator:
             raise NotAuthenticated("자격 인증 데이터가 제공되지 않았습니다.")
         raise PermissionDenied("쪽지시험 응시 내역 조회 권한이 없습니다.")
 
-    def get(self, request):
+    def get(self, request: Request) -> Response:
         query_serializer = AdminExamSubmissionListQuerySerializer(data=request.query_params)
         if not query_serializer.is_valid():
             return Response({"error_detail": "유효하지 않은 조회 요청입니다."}, status=status.HTTP_400_BAD_REQUEST)
