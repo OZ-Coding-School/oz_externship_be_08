@@ -7,6 +7,7 @@ from apps.exams.views.admin_exam_question_view import (
     AdminQuestionCreateView,
     AdminQuestionUpdateDeleteView,
 )
+from apps.exams.views.admin_exam_submission_view import AdminExamSubmissionView
 from apps.exams.views.admin_exam_view import ExamDetailView, ExamListCreateView
 
 
@@ -16,6 +17,7 @@ class ExamImageUploadView(PresignedUrlView):
 
 
 urlpatterns = [
+    path("submissions/", AdminExamSubmissionView.as_view(), name="exam-submission-list"),
     path("deployments/", AdminExamDeploymentView.as_view(), name="exam-deployment"),
     path("presigned-url/", ExamImageUploadView.as_view(), name="presigned-url"),
     path("<int:exam_id>/questions/", AdminQuestionCreateView.as_view(), name="exam-question-create"),
