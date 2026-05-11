@@ -1,5 +1,6 @@
 from typing import Never
 
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.exceptions import NotAuthenticated, PermissionDenied
 from rest_framework.pagination import PageNumberPagination as BasePageNumberPagination
@@ -40,6 +41,16 @@ class AdminExamSubmissionView(APIView):
             raise NotAuthenticated("자격 인증 데이터가 제공되지 않았습니다.")
         raise PermissionDenied("쪽지시험 응시 내역 조회 권한이 없습니다.")
 
+    @extend_schema(
+        tags=["admin-exams"],
+        summary="쪽지시험 응시내역 목록 조회",
+        responses={
+            200: AdminExamSubmissionListSerializer,
+            400: OpenApiResponse(description="유효하지 않은 조회 요청입니다."),
+            401: OpenApiResponse(description="자격 인증 데이터가 제공되지 않았습니다."),
+            403: OpenApiResponse(description="쪽지시험 응시 내역 조회 권한이 없습니다."),
+        },
+    )
     def get(self, request: Request) -> Response:
         query_serializer = AdminExamSubmissionListQuerySerializer(data=request.query_params)
         if not query_serializer.is_valid():
@@ -66,6 +77,17 @@ class AdminExamSubmissionDetailView(APIView):
             raise PermissionDenied("쪽지시험 응시 내역 삭제 권한이 없습니다.")
         raise PermissionDenied("권한이 없습니다.")
 
+    @extend_schema(
+        tags=["admin-exams"],
+        summary="쪽지시험 응시내역 상세 조회",
+        responses={
+            200: AdminExamSubmissionDetailSerializer,
+            400: OpenApiResponse(description="유효하지 않은 상세 조회 요청입니다."),
+            401: OpenApiResponse(description="자격 인증 데이터가 제공되지 않았습니다."),
+            403: OpenApiResponse(description="쪽지시험 응시 상세 조회 권한이 없습니다."),
+            404: OpenApiResponse(description="해당 응시 내역을 찾을 수 없습니다."),
+        },
+    )
     def get(self, request: Request, submission_id: int) -> Response:
         path_serializer = AdminExamSubmissionPathSerializer(data={"submission_id": submission_id})
         if not path_serializer.is_valid():
@@ -79,6 +101,18 @@ class AdminExamSubmissionDetailView(APIView):
         serializer = AdminExamSubmissionDetailSerializer(submission)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        tags=["admin-exams"],
+        summary="쪽지시험 응시내역 삭제",
+        responses={
+            200: OpenApiResponse(description="삭제된 응시내역 ID"),
+            400: OpenApiResponse(description="유효하지 않은 응시 내역 삭제 요청입니다."),
+            401: OpenApiResponse(description="자격 인증 데이터가 제공되지 않았습니다."),
+            403: OpenApiResponse(description="쪽지시험 응시 내역 삭제 권한이 없습니다."),
+            404: OpenApiResponse(description="삭제할 응시 내역을 찾을 수 없습니다."),
+            409: OpenApiResponse(description="응시 내역 삭제 처리 중 충돌이 발생했습니다."),
+        },
+    )
     def delete(self, request: Request, submission_id: int) -> Response:
         path_serializer = AdminExamSubmissionPathSerializer(data={"submission_id": submission_id})
         if not path_serializer.is_valid():

@@ -14,6 +14,7 @@ from apps.exams.exceptions.exam_submission_exception import (
     UserSubmissionNotFound,
 )
 from apps.exams.serializers.user_exam_submission_serializer import (
+    UserExamSubmissionCreateResponseSerializer,
     UserExamSubmissionCreateSerializer,
     UserExamSubmissionExtendSchemaSerializer,
     UserExamSubmissionGetSerializer,
@@ -61,6 +62,19 @@ class UserExamSubmissionCreateView(APIView):
             raise NotAuthenticated("자격 인증 데이터가 제공되지 않았습니다.")
         raise PermissionDenied("권한이 없습니다.")
 
+    @extend_schema(
+        tags=["exams"],
+        summary="쪽지시험 응시 제출 API",
+        request=UserExamSubmissionCreateSerializer,
+        responses={
+            201: UserExamSubmissionCreateResponseSerializer,
+            400: OpenApiResponse(description="유효하지 않은 시험 응시 세션입니다."),
+            401: OpenApiResponse(description="자격 인증 데이터가 제공되지 않았습니다."),
+            403: OpenApiResponse(description="권한이 없습니다."),
+            404: OpenApiResponse(description="해당 시험 정보를 찾을 수 없습니다."),
+            409: OpenApiResponse(description="이미 제출된 시험입니다."),
+        },
+    )
     def post(self, request: Request) -> Response:
         serializer = UserExamSubmissionCreateSerializer(data=request.data)
         if not serializer.is_valid():
