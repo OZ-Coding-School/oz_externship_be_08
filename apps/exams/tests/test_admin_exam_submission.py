@@ -271,10 +271,7 @@ class TestAdminExamSubmissionDetailAPI(APITestCase):
             correct_answer_count=1,
             cheating_count=0,
             answer_json={
-                "1": {
-                    "submitted_answer": "인터프리터 언어",
-                    "is_correct": True,
-                }
+                "1": ["인터프리터 언어"],
             },
         )
 

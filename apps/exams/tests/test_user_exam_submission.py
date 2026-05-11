@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
@@ -231,3 +233,170 @@ class TestUserExamSubmissionGet(BaseTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data["error_detail"], "자격 인증 데이터가 제공되지 않았습니다.")
+
+
+class TestUserExamSubmissionCreate(APITestCase):
+    student: User
+    normal_user: User
+    course: Course
+    subject: Subject
+    cohort: Cohort
+    exam: Exam
+    question: ExamQuestion
+    deployment: ExamDeployment
+    url: str
+    error_401: str
+    error_403: str
+    error_400: str
+    error_404: str
+    error_409: str
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.student = User.objects.create_user(
+            email="create_student@test.com",
+            password="test1234!",
+            name="제출학생",
+            nickname="c_student",
+            phone_number="010-5555-5555",
+            is_active=True,
+            role="STUDENT",
+        )
+        cls.normal_user = User.objects.create_user(
+            email="create_normal@test.com",
+            password="test1234!",
+            name="일반유저",
+            nickname="c_normal",
+            phone_number="010-6666-6666",
+            is_active=True,
+            role="USER",
+        )
+
+        cls.course = Course.objects.create(name="백엔드", tag="WEB")
+        cls.subject = Subject.objects.create(
+            course=cls.course,
+            title="Django",
+            number_of_days=30,
+            number_of_hours=60,
+        )
+        cls.cohort = Cohort.objects.create(
+            course=cls.course,
+            number=1,
+            max_student=30,
+            start_date="2024-01-01",
+            end_date="2024-12-31",
+        )
+        cls.exam = Exam.objects.create(subject=cls.subject, title="Django 테스트")
+        cls.question = ExamQuestion.objects.create(
+            exam=cls.exam,
+            question="Django는 Python 웹 프레임워크이다",
+            type="ox",
+            answer=["O"],
+            point=10,
+            explanation="맞습니다.",
+        )
+        cls.deployment = ExamDeployment.objects.create(
+            exam=cls.exam,
+            cohort=cls.cohort,
+            access_code="create-access-code",
+            open_at="2024-01-01T00:00:00Z",
+            close_at="2024-12-31T23:59:59Z",
+            questions_snapshot_json=[
+                {
+                    "id": cls.question.id,
+                    "type": "ox",
+                    "question": "Django는 Python 웹 프레임워크이다",
+                    "answer": ["O"],
+                    "point": 10,
+                    "explanation": "맞습니다.",
+                }
+            ],
+        )
+
+        cls.url = reverse("user-exam-submission-create")
+        cls.error_401 = "자격 인증 데이터가 제공되지 않았습니다."
+        cls.error_403 = "권한이 없습니다."
+        cls.error_400 = "유효하지 않은 시험 응시 세션입니다."
+        cls.error_404 = "해당 시험 정보를 찾을 수 없습니다."
+        cls.error_409 = "이미 제출된 시험입니다."
+
+    def setUp(self) -> None:
+        self.client = APIClient()
+
+    def get_valid_data(self) -> dict[str, Any]:
+        return {
+            "deployment_id": self.deployment.id,
+            "started_at": "2024-01-01T10:00:00Z",
+            "cheating_count": 0,
+            "answers": [
+                {
+                    "question_id": self.question.id,
+                    "type": "ox",
+                    "submitted_answer": "O",
+                }
+            ],
+        }
+
+    # 권한
+    def test_create_submission_as_student(self) -> None:
+        self.client.force_authenticate(user=self.student)
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_submission_as_anonymous(self) -> None:
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data.get("error_detail"), self.error_401)
+
+    def test_create_submission_as_normal_user(self) -> None:
+        self.client.force_authenticate(user=self.normal_user)
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data.get("error_detail"), self.error_403)
+
+    # 제출 성공
+    def test_create_submission_success(self) -> None:
+        self.client.force_authenticate(user=self.student)
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn("submission_id", response.data)
+        self.assertEqual(response.data["score"], 10)
+        self.assertEqual(response.data["correct_answer_count"], 1)
+        self.assertEqual(response.data["redirect_url"], f"/exam/result/{response.data['submission_id']}")
+
+    # 400
+    def test_create_submission_invalid_data(self) -> None:
+        self.client.force_authenticate(user=self.student)
+        response = self.client.post(self.url, {}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get("error_detail"), self.error_400)
+
+    # 404
+    def test_create_submission_deployment_not_found(self) -> None:
+        self.client.force_authenticate(user=self.student)
+        data = self.get_valid_data()
+        data["deployment_id"] = 99999
+        response = self.client.post(self.url, data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data.get("error_detail"), self.error_404)
+
+    # 409
+    def test_create_submission_already_exists(self) -> None:
+        ExamSubmission.objects.create(
+            submitter=self.student,
+            deployment=self.deployment,
+            started_at=timezone.now(),
+            score=10,
+            correct_answer_count=1,
+        )
+        self.client.force_authenticate(user=self.student)
+        response = self.client.post(self.url, self.get_valid_data(), format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+        self.assertEqual(response.data.get("error_detail"), self.error_409)

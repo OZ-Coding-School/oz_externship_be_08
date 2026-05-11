@@ -107,3 +107,25 @@ class UserExamSubmissionExtendSchemaSerializer(serializers.Serializer[Any]):
     elapsed_time = serializers.IntegerField()
     started_at = serializers.DateTimeField()
     submitted_at = serializers.DateTimeField()
+
+
+class AnswerItemSerializer(serializers.Serializer[Any]):
+    question_id = serializers.IntegerField(min_value=1)
+    type = serializers.ChoiceField(
+        choices=["single_choice", "multiple_choice", "short_answer", "fill_blank", "ox", "ordering"]
+    )
+    submitted_answer = serializers.JSONField(required=False)
+
+
+class UserExamSubmissionCreateSerializer(serializers.Serializer[Any]):
+    deployment_id = serializers.IntegerField(min_value=1)
+    started_at = serializers.DateTimeField()
+    cheating_count = serializers.IntegerField(min_value=0, max_value=3)
+    answers = AnswerItemSerializer(many=True)
+
+
+class UserExamSubmissionCreateResponseSerializer(serializers.Serializer[Any]):
+    submission_id = serializers.IntegerField()
+    score = serializers.IntegerField()
+    correct_answer_count = serializers.IntegerField()
+    redirect_url = serializers.CharField()

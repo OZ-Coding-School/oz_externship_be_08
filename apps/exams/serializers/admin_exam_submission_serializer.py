@@ -90,7 +90,7 @@ class AdminExamSubmissionDetailSerializer(serializers.Serializer[Any]):
         questions = []
         for idx, q in enumerate(snapshot, start=1):
             q_id = str(q.get("id"))
-            answer_data = answers.get(q_id, {})
+            submitted_answer = answers.get(q_id)
             questions.append(
                 {
                     "id": q.get("id"),
@@ -101,8 +101,8 @@ class AdminExamSubmissionDetailSerializer(serializers.Serializer[Any]):
                     "options": q.get("options"),
                     "point": q.get("point"),
                     "answer": q.get("answer"),
-                    "submitted_answer": answer_data.get("submitted_answer"),
-                    "is_correct": answer_data.get("is_correct", False),
+                    "submitted_answer": submitted_answer,
+                    "is_correct": submitted_answer == q.get("answer"),
                     "explanation": q.get("explanation"),
                 }
             )

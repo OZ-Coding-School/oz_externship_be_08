@@ -8,12 +8,20 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.core.utils.permissions import IsStudentUser
-from apps.exams.exceptions.exam_submission_exception import UserSubmissionNotFound
+from apps.exams.exceptions.exam_submission_exception import (
+    DeploymentNotFound,
+    SubmissionAlreadyExists,
+    UserSubmissionNotFound,
+)
 from apps.exams.serializers.user_exam_submission_serializer import (
+    UserExamSubmissionCreateSerializer,
     UserExamSubmissionExtendSchemaSerializer,
     UserExamSubmissionGetSerializer,
 )
-from apps.exams.services.user_exam_submission_service import get_submission_detail
+from apps.exams.services.user_exam_submission_service import (
+    create_submission,
+    get_submission_detail,
+)
 
 
 class UserExamSubmissionGetView(APIView):
@@ -43,3 +51,35 @@ class UserExamSubmissionGetView(APIView):
             return Response({"error_detail": str(e)}, status=status.HTTP_404_NOT_FOUND)
         serializer = UserExamSubmissionGetSerializer(submission)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserExamSubmissionCreateView(APIView):
+    permission_classes = [IsStudentUser]
+
+    def permission_denied(self, request: Request, message: str | None = None, code: str | None = None) -> NoReturn:
+        if not request.user.is_authenticated:
+            raise NotAuthenticated("자격 인증 데이터가 제공되지 않았습니다.")
+        raise PermissionDenied("권한이 없습니다.")
+
+    def post(self, request: Request) -> Response:
+        serializer = UserExamSubmissionCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({"error_detail": "유효하지 않은 시험 응시 세션입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            assert request.user.id is not None
+            submission = create_submission(request.user.id, serializer.validated_data)
+        except DeploymentNotFound as e:
+            return Response({"error_detail": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        except SubmissionAlreadyExists as e:
+            return Response({"error_detail": str(e)}, status=status.HTTP_409_CONFLICT)
+
+        return Response(
+            {
+                "submission_id": submission.id,
+                "score": submission.score,
+                "correct_answer_count": submission.correct_answer_count,
+                "redirect_url": f"/exam/result/{submission.id}",
+            },
+            status=status.HTTP_201_CREATED,
+        )
