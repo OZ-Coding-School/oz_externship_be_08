@@ -25,7 +25,6 @@ class TestAdminExamSubmissionListAPI(APITestCase):
     url: str
     error_401: str
     error_403: str
-    error_404: str
     error_400: str
 
     @classmethod
@@ -100,7 +99,6 @@ class TestAdminExamSubmissionListAPI(APITestCase):
         cls.url = reverse("exam-submission-list")
         cls.error_401 = "자격 인증 데이터가 제공되지 않았습니다."
         cls.error_403 = "쪽지시험 응시 내역 조회 권한이 없습니다."
-        cls.error_404 = "조회된 응시 내역이 없습니다."
         cls.error_400 = "유효하지 않은 조회 요청입니다."
 
     def setUp(self) -> None:
@@ -132,8 +130,8 @@ class TestAdminExamSubmissionListAPI(APITestCase):
         self.client.force_authenticate(user=self.admin)
         response = self.client.get(self.url, {"search_keyword": "존재하지않는이름"})
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data.get("error_detail"), self.error_404)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 0)
 
     # 필터링
     def test_submission_list_filter_by_cohort_id(self) -> None:

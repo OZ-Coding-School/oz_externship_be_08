@@ -2,7 +2,7 @@ from typing import Never
 
 from rest_framework import status
 from rest_framework.exceptions import NotAuthenticated, PermissionDenied
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import PageNumberPagination as BasePageNumberPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,6 +13,12 @@ from apps.exams.serializers.admin_exam_submission_serializer import (
     AdminExamSubmissionListSerializer,
 )
 from apps.exams.services.admin_exam_submission_service import get_submission_list
+
+
+class ExamSubmissionPagination(BasePageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
 
 
 class AdminExamSubmissionView(APIView):
@@ -30,10 +36,7 @@ class AdminExamSubmissionView(APIView):
 
         submissions = get_submission_list(query_serializer.validated_data)
 
-        if not submissions.exists():
-            return Response({"error_detail": "조회된 응시 내역이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
-
-        paginator = PageNumberPagination()
+        paginator = ExamSubmissionPagination()
         paginated = paginator.paginate_queryset(submissions, request)
 
         serializer = AdminExamSubmissionListSerializer(paginated, many=True)

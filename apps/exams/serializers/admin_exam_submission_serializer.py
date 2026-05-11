@@ -1,25 +1,19 @@
+from typing import Any
+
 from rest_framework import serializers
 
 
-class AdminExamSubmissionListQuerySerializer(serializers.Serializer):
-    page = serializers.IntegerField(required=False)
-    page_size = serializers.IntegerField(required=False)
-    search_keyword = serializers.CharField(required=False)
-    cohort_id = serializers.IntegerField(required=False)
-    exam_id = serializers.IntegerField(required=False)
-    sort = serializers.ChoiceField(
-        choices=["created_at", "score"],
-        default="created_at",
-        required=False
-    )
-    order = serializers.ChoiceField(
-        choices=["asc", "desc"],
-        default="desc",
-        required=False
-    )
+class AdminExamSubmissionListQuerySerializer(serializers.Serializer[Any]):
+    page = serializers.IntegerField(required=False, min_value=1, default=1)
+    page_size = serializers.IntegerField(required=False, min_value=1)
+    search_keyword = serializers.CharField(required=False, allow_blank=True)
+    cohort_id = serializers.IntegerField(required=False, min_value=1)
+    exam_id = serializers.IntegerField(required=False, min_value=1)
+    sort = serializers.ChoiceField(choices=["created_at", "score"], default="created_at", required=False)
+    order = serializers.ChoiceField(choices=["asc", "desc"], default="desc", required=False)
 
 
-class AdminExamSubmissionListSerializer(serializers.Serializer):
+class AdminExamSubmissionListSerializer(serializers.Serializer[Any]):
     submission_id = serializers.IntegerField(source="id")
     nickname = serializers.CharField(source="submitter.nickname")
     name = serializers.CharField(source="submitter.name")
