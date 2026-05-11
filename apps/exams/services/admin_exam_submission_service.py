@@ -28,9 +28,7 @@ def get_submission_list(validated_params: dict[str, Any]) -> QuerySet[ExamSubmis
     if exam_id:
         qs = qs.filter(deployment__exam_id=exam_id)
     if search_keyword:
-        qs = qs.filter(
-            Q(submitter__name__icontains=search_keyword) | Q(submitter__nickname__icontains=search_keyword)
-        )
+        qs = qs.filter(Q(submitter__name__icontains=search_keyword) | Q(submitter__nickname__icontains=search_keyword))
 
     sort_field = SORT_FIELD_MAP.get(sort, "created_at")
     qs = qs.order_by(f"-{sort_field}" if order == "desc" else sort_field)
