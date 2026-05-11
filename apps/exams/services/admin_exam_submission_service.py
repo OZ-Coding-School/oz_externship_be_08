@@ -2,6 +2,11 @@ from typing import Any
 
 from django.db.models import Q, QuerySet
 
+from apps.exams.exceptions.admin_exam_submission_exception import (
+    SubmissionConflictError,
+    SubmissionDeleteNotFoundError,
+    SubmissionNotFoundError,
+)
 from apps.exams.models.exam_submission_model import ExamSubmission
 
 SORT_FIELD_MAP = {
@@ -34,3 +39,25 @@ def get_submission_list(validated_params: dict[str, Any]) -> QuerySet[ExamSubmis
     qs = qs.order_by(f"-{sort_field}" if order == "desc" else sort_field)
 
     return qs
+
+
+def get_submission_detail(submission_id: int) -> ExamSubmission:
+    try:
+        return ExamSubmission.objects.select_related(
+            "submitter",
+            "deployment__cohort__course",
+            "deployment__exam__subject",
+        ).get(id=submission_id)
+    except ExamSubmission.DoesNotExist:
+        raise SubmissionNotFoundError()
+
+
+def delete_submission(submission_id: int) -> None:
+    try:
+        submission = ExamSubmission.objects.get(id=submission_id)
+    except ExamSubmission.DoesNotExist:
+        raise SubmissionDeleteNotFoundError()
+    try:
+        submission.delete()
+    except Exception:
+        raise SubmissionConflictError()
