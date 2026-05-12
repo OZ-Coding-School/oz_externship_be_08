@@ -44,6 +44,7 @@ class AdminExamSubmissionView(APIView):
     @extend_schema(
         tags=["admin-exams"],
         summary="쪽지시험 응시내역 목록 조회",
+        parameters=[AdminExamSubmissionListQuerySerializer],
         responses={
             200: AdminExamSubmissionListSerializer,
             400: OpenApiResponse(description="유효하지 않은 조회 요청입니다."),

@@ -4,13 +4,17 @@ from rest_framework import serializers
 
 
 class AdminExamSubmissionListQuerySerializer(serializers.Serializer[Any]):
-    page = serializers.IntegerField(required=False, min_value=1, default=1)
-    page_size = serializers.IntegerField(required=False, min_value=1)
-    search_keyword = serializers.CharField(required=False, allow_blank=True)
-    cohort_id = serializers.IntegerField(required=False, min_value=1)
-    exam_id = serializers.IntegerField(required=False, min_value=1)
-    sort = serializers.ChoiceField(choices=["created_at", "score"], default="created_at", required=False)
-    order = serializers.ChoiceField(choices=["asc", "desc"], default="desc", required=False)
+    page = serializers.IntegerField(required=False, min_value=1, default=1, help_text="페이지 번호")
+    page_size = serializers.IntegerField(required=False, min_value=1, help_text="목록 출력 개수")
+    search_keyword = serializers.CharField(required=False, help_text="닉네임 또는 이름으로 검색")
+    cohort_id = serializers.IntegerField(required=False, min_value=1, help_text="기수 ID로 필터링")
+    exam_id = serializers.IntegerField(required=False, min_value=1, help_text="시험 ID로 필터링")
+    sort = serializers.ChoiceField(
+        choices=["created_at", "score"], default="created_at", required=False, help_text="정렬 기준 (created_at, score)"
+    )
+    order = serializers.ChoiceField(
+        choices=["asc", "desc"], default="desc", required=False, help_text="정렬 순서 (asc, desc)"
+    )
 
 
 class AdminExamSubmissionListSerializer(serializers.Serializer[Any]):
