@@ -93,7 +93,7 @@ class UserExamSubmissionCreateView(APIView):
                 "submission_id": submission.id,
                 "score": submission.score,
                 "correct_answer_count": submission.correct_answer_count,
-                "redirect_url": f"/exam/result/{submission.id}",
+                "redirect_url": f"/quiz/{submission.id}/result",
             },
             status=status.HTTP_201_CREATED,
         )
