@@ -61,7 +61,7 @@ class ResultDetailSerializer(serializers.Serializer[Any]):
         return len(obj.deployment.questions_snapshot_json)
 
     def get_elapsed_time(self, obj: Any) -> int:
-        return int((obj.created_at - obj.started_at).total_seconds() // 60)
+        return int((obj.created_at - obj.started_at).total_seconds())
 
 
 class QuestionDetailSerializer(serializers.Serializer[Any]):
@@ -102,7 +102,7 @@ class AdminExamSubmissionDetailSerializer(serializers.Serializer[Any]):
                     "type": q.get("type"),
                     "question": q.get("question"),
                     "prompt": q.get("prompt"),
-                    "options": q.get("options"),
+                    "options": q.get("options_json"),
                     "point": q.get("point"),
                     "answer": q.get("answer"),
                     "submitted_answer": submitted_answer,
