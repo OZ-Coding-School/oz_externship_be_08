@@ -366,7 +366,7 @@ class TestUserExamSubmissionCreate(APITestCase):
         self.assertIn("submission_id", response.data)
         self.assertEqual(response.data["score"], 10)
         self.assertEqual(response.data["correct_answer_count"], 1)
-        self.assertEqual(response.data["redirect_url"], f"/exam/result/{response.data['submission_id']}")
+        self.assertEqual(response.data["redirect_url"], f"/quiz/{response.data['submission_id']}/result")
 
     # 400
     def test_create_submission_invalid_data(self) -> None:
