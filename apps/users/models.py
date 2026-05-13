@@ -121,7 +121,8 @@ class CohortStudents(TimeStampModel):
 class OperationManagers(TimeStampModel):
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="operation_managers", null=False)
-    course = models.ForeignKey("posts.Course", on_delete=models.CASCADE, null=True)
+    course = models.ForeignKey("courses.Course", on_delete=models.CASCADE, null=True)
+    # course 디렉토리 변경으로 인한 FK 경로 posts.Course -> course.Course로 수정
 
     class Meta:
         db_table = "operation_managers"
@@ -130,7 +131,8 @@ class OperationManagers(TimeStampModel):
 class LearningCoachs(TimeStampModel):
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="learning_coachs", null=False)
-    course = models.ForeignKey("posts.Course", on_delete=models.CASCADE, null=True)
+    course = models.ForeignKey("courses.Course", on_delete=models.CASCADE, null=True)
+    # course 디렉토리 변경으로 인한 FK 경로 posts.Course -> course.Course로 수정
 
     class Meta:
         db_table = "learning_coachs"

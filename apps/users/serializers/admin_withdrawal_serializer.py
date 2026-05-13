@@ -6,7 +6,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from apps.courses.models.cohort import Cohort
-from apps.posts.models.course import Course
+from apps.courses.models.course import Course
 from apps.users.models import User, Withdrawal
 
 POSITION_CHOICES = ("TA", "OM", "LC", "ENROLLED")

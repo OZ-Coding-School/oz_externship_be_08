@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.courses.models.cohort import Cohort
-from apps.posts.models.course import Course
+from apps.courses.models.course import Course
 from apps.users.models import CohortStudents, TrainigAssistants, User, Withdrawal
 
 

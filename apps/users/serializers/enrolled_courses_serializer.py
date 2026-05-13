@@ -3,7 +3,7 @@ from typing import Any
 from rest_framework import serializers
 
 from apps.courses.models.cohort import Cohort
-from apps.posts.models.course import Course
+from apps.courses.models.course import Course
 
 
 # 안쪽 시리얼라이저

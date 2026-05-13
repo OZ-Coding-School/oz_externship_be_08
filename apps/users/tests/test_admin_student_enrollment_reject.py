@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 
 from apps.courses.models.cohort import Cohort
-from apps.posts.models.course import Course
+from apps.courses.models.course import Course
 from apps.users.models import StudentEnrollmentRequests, User
 from apps.users.views.admin_student_enrollment_reject_view import (
     AdminStudentEnrollmentRejectView,

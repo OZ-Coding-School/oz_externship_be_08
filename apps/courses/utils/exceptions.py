@@ -22,3 +22,8 @@ class SubjectNotFoundError(NotFound):
 class SubjectDuplicateTitleError(APIException):
     status_code = status.HTTP_409_CONFLICT
     default_detail = "동일한 이름의 과목이 이미 존재합니다."
+
+
+class CourseAlreadyExistsError(APIException):
+    status_code = status.HTTP_409_CONFLICT
+    default_detail = "이미 등록된 과정명입니다."

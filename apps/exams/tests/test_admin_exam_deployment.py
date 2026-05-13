@@ -8,11 +8,11 @@ from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
 from apps.courses.models.cohort import Cohort
+from apps.courses.models.course import Course
 from apps.courses.models.subject import Subject
 from apps.exams.models.exam_deployment_model import ExamDeployment
 from apps.exams.models.exam_model import Exam
 from apps.exams.models.exam_question_model import ExamQuestion
-from apps.posts.models.course import Course
 from apps.users.models import User
 
 
