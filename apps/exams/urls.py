@@ -6,7 +6,10 @@ from apps.exams.views.exam_deployment_view import (
     ExamDeploymentListView,
     ExamDeploymentStatusView,
 )
-from apps.exams.views.user_exam_submission_view import UserExamSubmissionCreateView, UserExamSubmissionGetView
+from apps.exams.views.user_exam_submission_view import (
+    UserExamSubmissionCreateView,
+    UserExamSubmissionGetView,
+)
 
 urlpatterns = [
     path("submissions/", UserExamSubmissionCreateView.as_view(), name="user-exam-submission-create"),
