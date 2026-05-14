@@ -9,7 +9,7 @@ from apps.qna.serializers.admin_question_serializers import (
 # ── 어드민 질문 삭제 ──────────────────────────────────────────────────
 
 admin_question_delete_schema = extend_schema(
-    tags=["Admin - Qna"],
+    tags=["Admin-Qna"],
     summary="어드민 질의응답 삭제",
     description="관리자가 질의응답을 삭제합니다. 연관된 답변과 댓글도 함께 삭제됩니다.",
     parameters=[
@@ -57,7 +57,7 @@ admin_question_detail_schema = extend_schema(
 # ── 어드민 질문 목록 조회 ────────────────────────────────────────────
 
 admin_question_list_schema = extend_schema(
-    tags=["Admin - Qna"],
+    tags=["Admin-Qna"],
     summary="어드민 질의응답 목록 조회",
     description="관리자가 질의응답 목록을 조회합니다. 페이지네이션, 검색, 필터링을 지원합니다.",
     parameters=[

@@ -36,7 +36,7 @@ class UserInfoView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
-        tags=["Accounts (회원관리)"],
+        tags=["accounts"],
         summary="내 정보 수정 API",
         description="로그인한 유저는 닉네임, 이름, 생년월일, 성별 수정 가능",
         request=UserInfoUpdateSerializer,
