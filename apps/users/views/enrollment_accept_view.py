@@ -26,7 +26,7 @@ class AdminStudentEnrollmentAcceptView(APIView):
         raise exceptions.PermissionDenied("권한이 없습니다.")
 
     @extend_schema(
-        tags=["admin_students"],
+        tags=["admin-students"],
         summary="수강생 등록 요청 승인",
         description="어드민 페이지 수강생 등록 요청 승인 API",
         request=AdminEnrollmentAcceptSerializer,

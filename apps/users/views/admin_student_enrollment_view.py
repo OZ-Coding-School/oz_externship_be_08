@@ -18,7 +18,7 @@ class AdminEnrollmentRequestListView(APIView):
     permission_classes = [IsRoleAdminUser]
 
     @extend_schema(
-        tags=["admin_students"],
+        tags=["admin-students"],
         summary="수강생 등록 신청 목록 조회",
         description="어드민 페이지에서 수강생 등록 신청 목록을 조회합니다. (ADMIN 권한 필요)",
         parameters=[

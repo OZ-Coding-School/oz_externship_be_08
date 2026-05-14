@@ -16,7 +16,7 @@ from apps.qna.serializers.question_serializers import (
 # ── 질문 등록 ──────────────────────────────────────────────────────
 
 question_create_schema = extend_schema(
-    tags=["Qna"],
+    tags=["qna"],
     summary="질문 등록",
     description="새로운 질문을 등록합니다. 소분류 카테고리만 선택 가능합니다.",
     request=QuestionCreateSerializer,
@@ -31,7 +31,7 @@ question_create_schema = extend_schema(
 # ── 질문 목록 조회 ──────────────────────────────────────────────────
 
 question_list_schema = extend_schema(
-    tags=["Qna"],
+    tags=["qna"],
     summary="질문 목록 조회",
     description="질의응답 목록을 조회합니다. 검색, 카테고리 필터, 답변 상태 필터, 정렬 기능을 제공합니다.",
     parameters=[
@@ -89,7 +89,7 @@ question_list_schema = extend_schema(
 # ── 질문 상세 조회 ──────────────────────────────────────────────────
 
 question_detail_schema = extend_schema(
-    tags=["Qna"],
+    tags=["qna"],
     summary="질문 상세 조회",
     description="질문의 상세 정보를 조회합니다. 조회 시 조회수가 1 증가합니다.",
     parameters=[
@@ -113,7 +113,7 @@ question_detail_schema = extend_schema(
 # ── 질문 수정 ──────────────────────────────────────────────────────
 
 question_update_schema = extend_schema(
-    tags=["Qna"],
+    tags=["qna"],
     summary="질문 수정",
     description="본인이 작성한 질문을 수정합니다. 소분류 카테고리만 선택 가능합니다.",
     parameters=[

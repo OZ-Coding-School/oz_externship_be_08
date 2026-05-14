@@ -10,7 +10,7 @@ from apps.qna.serializers.answer_serializers import (
 )
 
 answer_accept_schema = extend_schema(
-    tags=["Qna"],
+    tags=["qna"],
     summary="답변 채택",
     description="질문 작성자가 답변을 채택합니다",
     responses={
@@ -23,7 +23,7 @@ answer_accept_schema = extend_schema(
 )
 
 answer_create_schema = extend_schema(
-    tags=["Qna"],
+    tags=["qna"],
     summary="답변 등록",
     description="질문에 대한 답변을 등록합니다.",
     request=AnswerRequestSerializer,
@@ -36,7 +36,7 @@ answer_create_schema = extend_schema(
     },
 )
 answer_update_schema = extend_schema(
-    tags=["Qna"],
+    tags=["qna"],
     summary="답변 수정",
     description="질문에 대한 답변을 수정합니다.",
     request=AnswerRequestSerializer,
@@ -49,7 +49,7 @@ answer_update_schema = extend_schema(
 )
 
 answer_comment_schema = extend_schema(
-    tags=["Qna"],
+    tags=["qna"],
     summary="답변 댓글",
     description="질문에 대한 댓글 작성",
     request=AnswerCommentRequestSerializer,

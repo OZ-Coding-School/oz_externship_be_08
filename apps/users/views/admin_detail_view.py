@@ -33,7 +33,7 @@ class AdminAccountView(APIView):
         raise exceptions.PermissionDenied("권한이 없습니다.")
 
     @extend_schema(
-        tags=["admin_accounts"],
+        tags=["admin-accounts"],
         summary="어드민 회원 상세 조회",
         description="어드민 전용 특정 회원의 상세 정보를 조회하는 API입니다.",
         responses={
@@ -53,7 +53,7 @@ class AdminAccountView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
-        tags=["admin_accounts"],
+        tags=["admin-accounts"],
         summary="어드민 회원 정보 수정",
         description="어드민 전용 특정 회원의 정보를 수정하는 API입니다.",
         request=AdminAccountUpdateSerializer,
@@ -83,7 +83,7 @@ class AdminAccountView(APIView):
         return Response(res_serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
-        tags=["admin_accounts"],
+        tags=["admin-accounts"],
         summary="어드민 회원 삭제",
         description="어드민 전용 특정 회원을 삭제하는 API입니다.",
         responses={

@@ -6,7 +6,7 @@ from apps.qna.serializers.category_serializers import (
 
 # 유저 카테고리 목록 조회
 category_list_schema = extend_schema(
-    tags=["Qna"],
+    tags=["qna"],
     summary="유저 카테고리 목록 조회",
     description="카테고리 목록을 트리 구조로 조회합니다.",
     responses={

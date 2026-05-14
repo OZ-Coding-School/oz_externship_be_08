@@ -23,7 +23,7 @@ class AdminStudentListView(APIView):
         raise PermissionDenied("권한이 없습니다.")
 
     @extend_schema(
-        tags=["admin_students"],
+        tags=["admin-students"],
         summary="어드민 페이지 수강생 목록 조회 API",
         description="관리자 권한을 가진 유저는 어드민 페이지 회원관리메뉴에서 등록된 수강생 목록 조회 가능",
         parameters=[

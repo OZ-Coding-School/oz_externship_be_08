@@ -3,7 +3,7 @@ from drf_spectacular.utils import OpenApiResponse, extend_schema
 from apps.qna.serializers.admin_answer_serializers import AdminAnswerDeleteSerializer
 
 answer_admin_delete_schema = extend_schema(
-    tags=["Admin-Qna"],
+    tags=["admin-qna"],
     summary="어드민 댓글 삭제",
     description="어드민 댓글 삭제",
     responses={

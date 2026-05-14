@@ -44,7 +44,7 @@ class AdminWithdrawalListView(APIView):
         raise PermissionDenied("권한이 없습니다.")
 
     @extend_schema(
-        tags=["admin_withdrawals"],
+        tags=["admin-withdrawals"],
         summary="어드민 회원 탈퇴 내역 목록 조회",
         description="어드민이 회원 탈퇴 내역을 페이지네이션, 검색, 역할, 정렬 조건으로 조회합니다.",
         parameters=[WithdrawalListQuerySerializer],
@@ -92,7 +92,7 @@ class AdminWithdrawalDetailView(APIView):
         raise PermissionDenied("권한이 없습니다.")
 
     @extend_schema(
-        tags=["admin_withdrawals"],
+        tags=["admin-withdrawals"],
         summary="어드민 회원 탈퇴 내역 상세 조회",
         description="어드민이 특정 회원 탈퇴 내역을 상세 조회합니다.",
         responses={
@@ -121,7 +121,7 @@ class AdminWithdrawalDetailView(APIView):
         return Response(serializer.data)
 
     @extend_schema(
-        tags=["admin_withdrawals"],
+        tags=["admin-withdrawals"],
         summary="어드민 회원 탈퇴 취소",
         description="어드민이 특정 회원 탈퇴 신청을 취소합니다.",
         responses={

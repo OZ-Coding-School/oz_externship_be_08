@@ -8,7 +8,7 @@ from apps.qna.serializers.category_serializers import (
 
 # 어드민 카테고리 생성
 admin_category_create_schema = extend_schema(
-    tags=["Admin-Qna"],
+    tags=["admin-qna"],
     summary="어드민 카테고리 생성",
     description="어드민이 카테고리를 생성합니다.",
     request=AdminCategoryCreateSerializer,
@@ -24,7 +24,7 @@ admin_category_create_schema = extend_schema(
 
 # 어드민 카테고리 목록 조회
 admin_category_list_schema = extend_schema(
-    tags=["Admin-Qna"],
+    tags=["admin-qna"],
     summary="어드민 카테고리 목록 조회",
     description="어드민이 카테고리 목록을 조회합니다.",
     parameters=[
@@ -47,7 +47,7 @@ admin_category_list_schema = extend_schema(
 
 # 어드민 카테고리 삭제
 admin_category_delete_schema = extend_schema(
-    tags=["Admin-Qna"],
+    tags=["admin-qna"],
     summary="어드민 카테고리 삭제",
     description="어드민이 카테고리를 삭제합니다. 하위 카테고리도 함께 삭제되며 질문은 기본 카테고리로 이관됩니다.",
     responses={

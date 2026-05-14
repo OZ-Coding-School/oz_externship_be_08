@@ -31,7 +31,7 @@ class SubjectListView(APIView):
         raise exceptions.PermissionDenied(detail="이 리소스를 조회할 권한이 없습니다.", code=code)
 
     @extend_schema(
-        tags=["Admin - Subject"],
+        tags=["admin-subject"],
         summary="어드민 과목 목록 조회",
         responses={
             200: SubjectListSerializer(many=True),
@@ -53,7 +53,7 @@ class SubjectCreateView(APIView):
         raise exceptions.PermissionDenied(detail="과목 생성 권한이 없습니다.", code=code)
 
     @extend_schema(
-        tags=["Admin - Subject"],
+        tags=["admin-subject"],
         summary="어드민 과목 생성",
         request=SubjectCreateSerializer,
         responses={
@@ -99,7 +99,7 @@ class SubjectDetailView(APIView):
         )
 
     @extend_schema(
-        tags=["Admin - Subject"],
+        tags=["admin-subject"],
         summary="어드민 과목 상세 조회",
         responses={
             200: SubjectDetailSerializer,
@@ -113,7 +113,7 @@ class SubjectDetailView(APIView):
         return Response(SubjectDetailSerializer(subject).data, status=status.HTTP_200_OK)
 
     @extend_schema(
-        tags=["Admin - Subject"],
+        tags=["admin-subject"],
         summary="어드민 과목 수정",
         request=SubjectUpdateSerializer,
         responses={
@@ -133,7 +133,7 @@ class SubjectDetailView(APIView):
         return Response(SubjectUpdateSerializer(subject).data, status=status.HTTP_200_OK)
 
     @extend_schema(
-        tags=["Admin - Subject"],
+        tags=["admin-subject"],
         summary="어드민 과목 삭제",
         responses={
             204: OpenApiResponse(description="No Content"),
@@ -148,7 +148,7 @@ class SubjectDetailView(APIView):
 
 
 @extend_schema(
-    tags=["Admin - Subject"],
+    tags=["admin-subject"],
     summary="과목 이미지 presigned URL 발급",
     request=PresignedUrlRequestSerializer,
     responses={200: PresignedUrlResponseSerializer},

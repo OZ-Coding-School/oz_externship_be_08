@@ -30,7 +30,7 @@ class CohortCreateView(APIView):
         raise exceptions.PermissionDenied(detail="권한이 없습니다.", code=code)
 
     @extend_schema(
-        tags=["Admin - Cohort"],
+        tags=["admin-cohort"],
         summary="어드민 페이지 기수 등록",
         request=CohortCreateSerializer,
         responses={
@@ -59,7 +59,7 @@ class CourseCohortListView(APIView):
         raise exceptions.PermissionDenied(detail="이 리소스를 조회할 권한이 없습니다.", code=code)
 
     @extend_schema(
-        tags=["Cohort"],
+        tags=["cohort"],
         summary="기수 리스트 조회",
         responses={
             200: CohortListSerializer(many=True),
@@ -98,7 +98,7 @@ class CohortDetailView(APIView):
         )
 
     @extend_schema(
-        tags=["Admin - Cohort"],
+        tags=["admin-cohort"],
         summary="어드민 페이지 기수 상세 조회",
         responses={
             200: CohortDetailSerializer,
@@ -117,7 +117,7 @@ class CohortDetailView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
-        tags=["Admin - Cohort"],
+        tags=["admin-cohort"],
         summary="어드민 페이지 기수 정보 수정",
         request=CohortUpdateSerializer,
         responses={
@@ -149,7 +149,7 @@ class CohortAvgScoreView(APIView):
         raise exceptions.PermissionDenied(detail="권한이 없습니다.", code=code)
 
     @extend_schema(
-        tags=["Admin - Cohort"],
+        tags=["admin-cohort"],
         summary="어드민 기수별 평균 점수 조회",
         responses={
             200: CohortAvgScoreSerializer(many=True),
@@ -174,7 +174,7 @@ class CohortStudentListView(APIView):
         raise exceptions.PermissionDenied(detail="권한이 없습니다.", code=code)
 
     @extend_schema(
-        tags=["Admin - Cohort"],
+        tags=["admin-cohort"],
         summary="어드민 기수별 수강생 목록 조회",
         responses={
             200: CohortStudentSerializer(many=True),

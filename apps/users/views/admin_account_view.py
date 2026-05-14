@@ -24,7 +24,7 @@ class AdminAccountListView(APIView):
         raise exceptions.PermissionDenied("권한이 없습니다.")
 
     @extend_schema(
-        tags=["admin_accounts"],
+        tags=["admin-accounts"],
         summary="어드민 회원 목록 조회",
         description="어드민 전용 회원 목록 조회 API입니다. 검색, 상태/역할 필터, 페이지네이션을 지원합니다.",
         parameters=[

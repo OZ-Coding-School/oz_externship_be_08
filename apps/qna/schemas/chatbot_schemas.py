@@ -7,7 +7,7 @@ from apps.qna.serializers.chatbot_serializers import (
 )
 
 ai_answer_post_schema = extend_schema(
-    tags=["Chatbot"],
+    tags=["chatbot"],
     summary="AI 초기응답 생성",
     description="질문글을 기준으로 AI가 초기응답을 생성합니다.",
     responses={
@@ -21,7 +21,7 @@ ai_answer_post_schema = extend_schema(
 )
 
 ai_answer_get_schema = extend_schema(
-    tags=["Chatbot"],
+    tags=["chatbot"],
     summary="AI 초기응답 조회",
     description="캐시에 저장된 초기응답을 불러옵니다.",
     responses={
@@ -37,7 +37,7 @@ ai_answer_get_schema = extend_schema(
 
 
 qna_chatbot_post_schema = extend_schema(
-    tags=["Chatbot"],
+    tags=["chatbot"],
     summary="qna 챗봇 대화",
     description="활성화된 채팅창에서 qna 챗봇과 질의응답을 합니다.",
     responses={
@@ -51,7 +51,7 @@ qna_chatbot_post_schema = extend_schema(
 )
 
 qna_chatbot_get_schema = extend_schema(
-    tags=["Chatbot"],
+    tags=["chatbot"],
     summary="qna 챗봇 히스토리 조회",
     description="캐시에 저장된 히스토리를 불러옵니다.",
     responses={
@@ -65,7 +65,7 @@ qna_chatbot_get_schema = extend_schema(
 )
 
 qna_chatbot_list_schema = extend_schema(
-    tags=["Chatbot"],
+    tags=["chatbot"],
     summary="qna 챗봇 리스트 조회",
     description="대화창별 마지막 메시지를 불러옵니다.",
     responses={
@@ -77,7 +77,7 @@ qna_chatbot_list_schema = extend_schema(
 
 
 cs_chatbot_get_schema = extend_schema(
-    tags=["Chatbot"],
+    tags=["chatbot"],
     summary="cs 챗봇 상세 조회",
     description="cs 챗봇의 히스토리를 불러와서 조회합니다.",
     responses={
@@ -86,7 +86,7 @@ cs_chatbot_get_schema = extend_schema(
 )
 
 cs_chatbot_post_schema = extend_schema(
-    tags=["Chatbot"],
+    tags=["chatbot"],
     summary="cs 챗봇 대화",
     description="활성화된 채팅창에서 cs 챗봇에게 고객지원을 받습니다.",
     responses={

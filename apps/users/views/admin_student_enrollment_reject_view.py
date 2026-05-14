@@ -30,7 +30,7 @@ class AdminStudentEnrollmentRejectView(APIView):
         raise PermissionDenied("권한이 없습니다.")
 
     @extend_schema(
-        tags=["admin_students"],
+        tags=["admin-students"],
         summary="어드민 수강생 등록 요청 거절",
         description="어드민이 수강생 등록 신청들에 대한 거절 요청을 처리합니다.",
         request=AdminStudentEnrollmentRejectRequestSerializer,

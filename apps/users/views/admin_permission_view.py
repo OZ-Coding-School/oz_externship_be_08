@@ -26,7 +26,7 @@ class AdminPermissionView(APIView):
         raise PermissionDenied("권한이 없습니다.")
 
     @extend_schema(
-        tags=["admin_accounts"],
+        tags=["admin-accounts"],
         summary="어드민 페이지 권한 변경 API",
         description="관리자 권한을 가진 유저는 특정 유저 권한 변경 가능",
         request=AdminPermissionSerializer,

@@ -42,7 +42,7 @@ from apps.qna.services.answer_services import (
 
 
 @extend_schema(
-    tags=["Qna"],
+    tags=["qna"],
     summary="답변 이미지 presigned URL 발급",
     request=PresignedUrlRequestSerializer,
     responses={200: PresignedUrlResponseSerializer},
