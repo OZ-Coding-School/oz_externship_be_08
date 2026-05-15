@@ -64,6 +64,11 @@ def create_deployment(validated_data: dict[str, Any]) -> ExamDeployment:
     if not snapshot:
         raise DeploymentNoQuestionsError()
 
+    for q in snapshot:
+        answer = q.get("answer", [])
+        if isinstance(answer, str):
+            q["answer"] = [answer]
+
     access_code = create_access_code()
 
     deployment = ExamDeployment.objects.create(
