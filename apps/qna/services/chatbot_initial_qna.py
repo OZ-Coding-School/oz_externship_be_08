@@ -46,7 +46,13 @@ class InitialService:
             raise GetInitialTimeoutException()
 
         try:
-            return InitialService.save_initial_answer(question_id)
+            try:
+                return InitialService.save_initial_answer(question_id)
+            except ConflictException:
+                cached = CacheRepository.get_initial(key)
+                if cached:
+                    return cached
+                raise
         finally:
             CacheRepository.delete(lock_key)
 

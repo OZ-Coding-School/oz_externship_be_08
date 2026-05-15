@@ -98,8 +98,11 @@ class QNAChatbotAPIView(APIView):
 
     @staticmethod
     def _build_qna_stream(initial: InitialQNA, history: list[Message] | None, key: str, message: str) -> Iterator[str]:
-        for chunk in QNAChatbotService.response_qna_chat(initial, history, key, message):
-            yield f'data: {json.dumps({"message": chunk}, ensure_ascii=False)}\n\n'
+        try:
+            for chunk in QNAChatbotService.response_qna_chat(initial, history, key, message):
+                yield f'data: {json.dumps({"message": chunk}, ensure_ascii=False)}\n\n'
+        except BaseCustomException as e:
+            yield f'data: {json.dumps({"error_detail": str(e)}, ensure_ascii=False)}\n\n'
         yield "data: [DONE]\n\n"
 
 
@@ -155,6 +158,9 @@ class CSChatbotAPIView(APIView):
     @staticmethod
     def _build_cs_stream(generator: Iterator[str], first: str) -> Iterator[str]:
         yield f'data: {json.dumps({"message": first}, ensure_ascii=False)}\n\n'
-        for chunk in generator:
-            yield f'data: {json.dumps({"message": chunk}, ensure_ascii=False)}\n\n'
+        try:
+            for chunk in generator:
+                yield f'data: {json.dumps({"message": chunk}, ensure_ascii=False)}\n\n'
+        except BaseCustomException as e:
+            yield f'data: {json.dumps({"error_detail": str(e)}, ensure_ascii=False)}\n\n'
         yield "data: [DONE]\n\n"
