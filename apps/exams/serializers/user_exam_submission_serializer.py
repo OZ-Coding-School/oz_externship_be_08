@@ -27,6 +27,8 @@ class UserExamSubmissionGetSerializer(serializers.ModelSerializer[ExamSubmission
             q_id = str(q["id"])
             submitted = answer_json.get(q_id, [])
             options_json = q.get("options_json")
+            raw_answer = q.get("answer")
+            answer = raw_answer if isinstance(raw_answer, list) else ([raw_answer] if raw_answer is not None else [])
             result.append(
                 {
                     "id": q["id"],
@@ -35,10 +37,10 @@ class UserExamSubmissionGetSerializer(serializers.ModelSerializer[ExamSubmission
                     "blank_count": q.get("blank_count"),
                     "options": json.loads(options_json) if options_json else None,
                     "type": q.get("type"),
-                    "answer": q.get("answer"),
+                    "answer": answer,
                     "point": q["point"],
                     "explanation": q.get("explanation", ""),
-                    "is_correct": submitted == q.get("answer", []),
+                    "is_correct": submitted == answer,
                     "submitted_answer": submitted,
                 }
             )

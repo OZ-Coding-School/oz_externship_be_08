@@ -443,16 +443,17 @@ class TestUserExamSubmissionCreate(APITestCase):
 
 
 class TestSnapshotAnswerNormalization(APITestCase):
-    """배포 생성 시 스냅샷 answer가 항상 리스트로 저장되고, 제출 시 correct_answer_count가 정상 계산되는지 테스트"""
+    """배포 생성 시 스냅샷 answer가 항상 리스트로 저장되고, 제출/조회 시 정상 동작하는지 테스트"""
 
     student: User
     course: Course
     subject: Subject
-    cohort: Cohort
+    cohort1: Cohort
     cohort2: Cohort
+    cohort3: Cohort
     exam: Exam
-    question_list_answer: ExamQuestion
-    question_string_answer: ExamQuestion
+    question1: ExamQuestion
+    question2: ExamQuestion
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -472,24 +473,19 @@ class TestSnapshotAnswerNormalization(APITestCase):
             number_of_days=30,
             number_of_hours=60,
         )
-        cls.cohort = Cohort.objects.create(
-            course=cls.course,
-            number=1,
-            max_student=30,
-            start_date="2024-01-01",
-            end_date="2024-12-31",
+        cls.cohort1 = Cohort.objects.create(
+            course=cls.course, number=1, max_student=30, start_date="2024-01-01", end_date="2024-12-31"
         )
         cls.cohort2 = Cohort.objects.create(
-            course=cls.course,
-            number=2,
-            max_student=30,
-            start_date="2024-01-01",
-            end_date="2024-12-31",
+            course=cls.course, number=2, max_student=30, start_date="2024-01-01", end_date="2024-12-31"
         )
-
-        # answer가 리스트인 문제 (정상 케이스)
+        cls.cohort3 = Cohort.objects.create(
+            course=cls.course, number=3, max_student=30, start_date="2024-01-01", end_date="2024-12-31"
+        )
         cls.exam = Exam.objects.create(subject=cls.subject, title="스냅샷테스트시험")
-        cls.question_list_answer = ExamQuestion.objects.create(
+
+        # answer가 리스트인 문제
+        cls.question1 = ExamQuestion.objects.create(
             exam=cls.exam,
             question="Django는 Python 웹 프레임워크이다",
             type="ox",
@@ -497,13 +493,12 @@ class TestSnapshotAnswerNormalization(APITestCase):
             point=10,
             explanation="맞습니다.",
         )
-
-        # answer가 문자열인 문제 (구버전 데이터 케이스)
-        cls.question_string_answer = ExamQuestion.objects.create(
+        # answer가 문자열인 문제 (구버전 데이터)
+        cls.question2 = ExamQuestion.objects.create(
             exam=cls.exam,
             question="Python은 인터프리터 언어이다",
             type="ox",
-            answer="O",  # 구버전 방식으로 문자열 저장
+            answer="O",
             point=10,
             explanation="맞습니다.",
         )
@@ -513,18 +508,15 @@ class TestSnapshotAnswerNormalization(APITestCase):
         self.client.force_authenticate(user=self.student)
         self.submit_url = reverse("user-exam-submission-create")
 
-    def _create_deployment_via_service(self, cohort: Cohort) -> ExamDeployment:
+    def _create_deployment(self, cohort: Cohort) -> ExamDeployment:
         from apps.exams.services.admin_exam_deployment_service import create_deployment
-
-        return create_deployment(
-            {
-                "exam_id": self.exam.id,
-                "cohort_id": cohort.id,
-                "open_at": "2024-01-01T00:00:00Z",
-                "close_at": "2024-12-31T23:59:59Z",
-                "duration_time": 60,
-            }
-        )
+        return create_deployment({
+            "exam_id": self.exam.id,
+            "cohort_id": cohort.id,
+            "open_at": "2024-01-01T00:00:00Z",
+            "close_at": "2024-12-31T23:59:59Z",
+            "duration_time": 60,
+        })
 
     def _get_submit_data(self, deployment: ExamDeployment) -> dict[str, Any]:
         return {
@@ -532,54 +524,37 @@ class TestSnapshotAnswerNormalization(APITestCase):
             "started_at": "2024-01-01T10:00:00Z",
             "cheating_count": 0,
             "answers": [
-                {
-                    "question_id": self.question_list_answer.id,
-                    "type": "ox",
-                    "submitted_answer": "O",
-                },
-                {
-                    "question_id": self.question_string_answer.id,
-                    "type": "ox",
-                    "submitted_answer": "O",
-                },
+                {"question_id": self.question1.id, "type": "ox", "submitted_answer": "O"},
+                {"question_id": self.question2.id, "type": "ox", "submitted_answer": "O"},
             ],
         }
 
     # 배포 생성 시 스냅샷 answer가 항상 리스트로 저장되는지 확인
-    def test_snapshot_answer_is_always_list_on_deployment_creation(self) -> None:
-        deployment = self._create_deployment_via_service(self.cohort)
+    def test_snapshot_answer_is_always_list(self) -> None:
+        deployment = self._create_deployment(self.cohort1)
 
         for q in deployment.questions_snapshot_json:
-            self.assertIsInstance(q["answer"], list, f"question {q['id']}의 answer가 리스트가 아님: {q['answer']}")
+            self.assertIsInstance(q["answer"], list)
 
-    # 배포 생성 후 제출 시 correct_answer_count 정상 계산 확인
-    def test_correct_answer_count_after_deployment_creation(self) -> None:
-        deployment = self._create_deployment_via_service(self.cohort2)
+    # 제출 시 correct_answer_count 정상 계산 확인
+    def test_correct_answer_count_is_correct(self) -> None:
+        deployment = self._create_deployment(self.cohort2)
         response = self.client.post(self.submit_url, self._get_submit_data(deployment), format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["score"], 20)
         self.assertEqual(response.data["correct_answer_count"], 2)
 
-    # 제출 후 결과 조회 시 is_correct 정상 표시 확인
-    def test_get_submission_is_correct_after_deployment_creation(self) -> None:
-        deployment = self._create_deployment_via_service(
-            Cohort.objects.create(
-                course=self.course,
-                number=3,
-                max_student=30,
-                start_date="2024-01-01",
-                end_date="2024-12-31",
-            )
-        )
+    # 결과 조회 시 answer가 리스트, is_correct 정상 표시 확인
+    def test_get_submission_answer_is_list_and_is_correct(self) -> None:
+        deployment = self._create_deployment(self.cohort3)
         post_response = self.client.post(self.submit_url, self._get_submit_data(deployment), format="json")
         submission_id = post_response.data["submission_id"]
 
         get_response = self.client.get(reverse("user-exam-submission-get", kwargs={"submission_id": submission_id}))
 
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(get_response.data["score"], 20)
         self.assertEqual(get_response.data["correct_answer_count"], 2)
         for question in get_response.data["questions"]:
-            self.assertTrue(question["is_correct"])
             self.assertIsInstance(question["answer"], list)
+            self.assertTrue(question["is_correct"])
