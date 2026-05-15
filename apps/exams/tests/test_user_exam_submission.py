@@ -510,13 +510,16 @@ class TestSnapshotAnswerNormalization(APITestCase):
 
     def _create_deployment(self, cohort: Cohort) -> ExamDeployment:
         from apps.exams.services.admin_exam_deployment_service import create_deployment
-        return create_deployment({
-            "exam_id": self.exam.id,
-            "cohort_id": cohort.id,
-            "open_at": "2024-01-01T00:00:00Z",
-            "close_at": "2024-12-31T23:59:59Z",
-            "duration_time": 60,
-        })
+
+        return create_deployment(
+            {
+                "exam_id": self.exam.id,
+                "cohort_id": cohort.id,
+                "open_at": "2024-01-01T00:00:00Z",
+                "close_at": "2024-12-31T23:59:59Z",
+                "duration_time": 60,
+            }
+        )
 
     def _get_submit_data(self, deployment: ExamDeployment) -> dict[str, Any]:
         return {
