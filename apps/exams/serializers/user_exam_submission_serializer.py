@@ -3,7 +3,7 @@ from typing import Any
 
 from rest_framework import serializers
 
-from apps.exams.models import Exam, ExamQuestion, ExamSubmission
+from apps.exams.models import Exam, ExamSubmission
 
 
 class ExamNestedSerializer(serializers.ModelSerializer[Exam]):
@@ -13,38 +13,31 @@ class ExamNestedSerializer(serializers.ModelSerializer[Exam]):
         read_only_fields = ["id", "title", "thumbnail_img_url"]
 
 
-class QuestionsNestedSerializer(serializers.ModelSerializer[ExamQuestion]):
+class QuestionsNestedSerializer(serializers.Serializer[Any]):
+    id = serializers.IntegerField()
+    question = serializers.CharField()
+    prompt = serializers.CharField(allow_blank=True)
+    blank_count = serializers.IntegerField(allow_null=True)
     options = serializers.SerializerMethodField()
+    type = serializers.CharField()
+    answer = serializers.JSONField()
+    point = serializers.IntegerField()
+    explanation = serializers.CharField(allow_blank=True)
     is_correct = serializers.SerializerMethodField()
     submitted_answer = serializers.SerializerMethodField()
 
-    def get_options(self, obj: ExamQuestion) -> list[str] | None:
-        return json.loads(obj.options_json) if obj.options_json else None
+    def get_options(self, obj: dict[str, Any]) -> list[str] | None:
+        options_json = obj.get("options_json")
+        return json.loads(options_json) if options_json else None
 
-    def get_is_correct(self, obj: ExamQuestion) -> bool:
+    def get_is_correct(self, obj: dict[str, Any]) -> bool:
         answer_json: dict[str, list[str]] = self.context.get("answer_json", {})
-        submitted: list[str] = answer_json.get(str(obj.id), [])
-        return bool(submitted == obj.answer)
+        submitted: list[str] = answer_json.get(str(obj.get("id")), [])
+        return bool(submitted == obj.get("answer"))
 
-    def get_submitted_answer(self, obj: ExamQuestion) -> list[str]:
+    def get_submitted_answer(self, obj: dict[str, Any]) -> list[str]:
         answer_json: dict[str, list[str]] = self.context.get("answer_json", {})
-        return answer_json.get(str(obj.id), [])
-
-    class Meta:
-        model = ExamQuestion
-        fields = [
-            "id",
-            "question",
-            "prompt",
-            "blank_count",
-            "options",
-            "type",
-            "answer",
-            "point",
-            "explanation",
-            "is_correct",
-            "submitted_answer",
-        ]
+        return answer_json.get(str(obj.get("id")), [])
 
 
 class UserExamSubmissionGetSerializer(serializers.ModelSerializer[ExamSubmission]):
@@ -55,8 +48,8 @@ class UserExamSubmissionGetSerializer(serializers.ModelSerializer[ExamSubmission
     elapsed_time = serializers.SerializerMethodField()
 
     def get_questions(self, obj: ExamSubmission) -> list[dict[str, Any]]:
-        queryset = ExamQuestion.objects.filter(exam=obj.deployment.exam)
-        serializer = QuestionsNestedSerializer(queryset, many=True, context={"answer_json": obj.answer_json})
+        questions = obj.deployment.questions_snapshot_json
+        serializer = QuestionsNestedSerializer(questions, many=True, context={"answer_json": obj.answer_json})
         return list(serializer.data)
 
     def get_total_score(self, obj: ExamSubmission) -> int:

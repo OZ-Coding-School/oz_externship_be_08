@@ -10,7 +10,7 @@ from apps.exams.models import ExamDeployment, ExamSubmission
 
 def get_submission_detail(submitter: int, submission_id: int) -> ExamSubmission:
     try:
-        return ExamSubmission.objects.select_related("deployment__exam__subject").get(
+        return ExamSubmission.objects.select_related("deployment__exam").get(
             submitter=submitter, id=submission_id
         )
     except ExamSubmission.DoesNotExist:
