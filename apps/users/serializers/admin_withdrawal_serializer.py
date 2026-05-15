@@ -186,5 +186,6 @@ class ValidationErrorDetailSerializer(serializers.Serializer[Any]):
     error_detail = serializers.DictField(child=serializers.ListField(child=serializers.CharField()), read_only=True)
 
 
+#
 class ErrorDetailSerializer(serializers.Serializer[Any]):
     error_detail = serializers.CharField(read_only=True)

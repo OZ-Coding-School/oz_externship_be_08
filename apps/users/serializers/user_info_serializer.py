@@ -46,7 +46,7 @@ class UserInfoSerializer(serializers.ModelSerializer[User]):
             return "OM"
         if obj.learning_coachs.exists():
             return "LC"
-        if obj.cohort_students.exists():
+        if obj.cohort_students.exists() or obj.role == User.Role.STUDENT:
             return "ENROLLED"
         return None
 
