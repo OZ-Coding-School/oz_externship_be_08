@@ -74,7 +74,8 @@ class QNAChatbotService(ChatbotBaseService):
 
     @staticmethod
     def _return_qna_history(user_id: int, question_id: int, initial: InitialQNA) -> list[Message]:
-        QNAChatbotService._make_session(user_id, question_id)
+        if CacheRepository.get_session(SESSION_KEY.format(user_id=user_id)) is None:
+            QNAChatbotService._make_session(user_id, question_id)
         key = QNA_KEY.format(user_id=user_id, question_id=question_id)
         history = CacheRepository.get_history(key)
         if not history:
